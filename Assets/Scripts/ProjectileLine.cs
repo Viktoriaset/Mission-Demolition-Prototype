@@ -1,8 +1,5 @@
-using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 public class ProjectileLine : MonoBehaviour
 {
@@ -53,6 +50,8 @@ public class ProjectileLine : MonoBehaviour
 
     public void AddPoint()
     {
+        if (_poi == null) return;
+
         Vector3 pt = _poi.transform.position;
         if (points.Count > 0 && (pt - lastPoint).magnitude < minDist)
         {
@@ -71,7 +70,7 @@ public class ProjectileLine : MonoBehaviour
             line.SetPosition(1, points[1]);
 
             line.enabled = true;
-        } 
+        }
         else
         {
             points.Add(pt);
@@ -106,13 +105,12 @@ public class ProjectileLine : MonoBehaviour
                 }
                 else return;
             }
-            else return;
         }
 
         AddPoint();
-        if (FollowCam.POI == null)
+        /*if (FollowCam.POI == null)
         {
             poi = null;
-        }
+        }*/
     }
 }

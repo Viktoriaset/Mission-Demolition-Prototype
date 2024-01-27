@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,6 +12,10 @@ public class Cloud : MonoBehaviour
     [SerializeField] private Vector2 sphereScaleRangeY = new Vector2(3, 4);
     [SerializeField] private Vector2 sphereScaleRangeZ = new Vector2(2, 4);
     [SerializeField] private float scaleMinY = 2f;
+
+    [SerializeField] private float cloudSpeedMult = 2f;
+    [SerializeField] private Vector3 posMin = new Vector3(-50, 5, 5);
+    [SerializeField] private Vector3 posMax = new Vector3(150, 5, 5);
 
     private List<GameObject> spheres;
 
@@ -33,7 +36,7 @@ public class Cloud : MonoBehaviour
             offset.y *= sphereOffsetScale.y;
             offset.z *= sphereOffsetScale.z;
             spTrans.localPosition = offset;
-
+    
             Vector3 scale = Vector3.one;
             scale.x = Random.Range(sphereScaleRangeX.x, sphereScaleRangeX.y);
             scale.y = Random.Range(sphereScaleRangeY.x, sphereScaleRangeY.y);
@@ -41,24 +44,24 @@ public class Cloud : MonoBehaviour
 
             scale.y *= 1 - (Mathf.Abs(offset.x) / sphereOffsetScale.x);
             scale.y = Mathf.Max(scale.y, scaleMinY);
+
+            spTrans.localScale = scale;
         }
     }
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            Restart();
-        }
-    }
+        float scaleVal = transform.localScale.x;
+        Vector3 cPos = transform.position;
 
-    private void Restart()
-    {
-        foreach(GameObject sp in spheres)
+        cPos.x -= scaleVal * Time.deltaTime * cloudSpeedMult;
+
+        if (cPos.x <= posMin.x)
         {
-            Destroy(sp);
+            cPos.x = posMax.x;
         }
 
-        Start();
+        transform.position = cPos;
     }
+
 }

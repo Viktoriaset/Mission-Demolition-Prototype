@@ -47,7 +47,7 @@ MonoBehaviour:
   cloudSphere: {fileID: 8528500669578581809, guid: da0461512bc6f034181f07715162bb2a, type: 3}
   numSphereMin: 10
   numSphereMax: 20
-  sphereOffsetScale: {x: 2, y: 1, z: 1}
+  sphereOffsetScale: {x: 1, y: 1, z: 1}
   sphereScaleRangeX: {x: 6, y: 8}
   sphereScaleRangeY: {x: 3, y: 4}
   sphereScaleRangeZ: {x: 2, y: 4}

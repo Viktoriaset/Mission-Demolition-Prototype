@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Slingshot : MonoBehaviour
@@ -17,6 +15,10 @@ public class Slingshot : MonoBehaviour
     private GameObject projectile;
     private Rigidbody projectileRB;
     private bool aimingMod;
+
+    [SerializeField] private Transform rightArmEnd;
+    [SerializeField] private Transform leftArmEnd;
+    [SerializeField] private LineRenderer line;
 
     static public Vector3 LAUNCH_POS
     {
@@ -36,6 +38,10 @@ public class Slingshot : MonoBehaviour
         launchPoint = launchPointTrans.gameObject;
         launchPoint.SetActive(false);
         launchPos = launchPointTrans.position;
+
+        leftArmEnd = transform.Find("LeftArm").Find("LeftArmEnd");
+        rightArmEnd = transform.Find("RightArm").Find("RightArmEnd");
+        line = GetComponent<LineRenderer>();
     }
 
     private void OnMouseEnter()
@@ -61,7 +67,11 @@ public class Slingshot : MonoBehaviour
 
     private void Update()
     {
-        if (!aimingMod) return;
+        if (!aimingMod)
+        {
+            DrawRubber();
+            return;
+        }
 
         Vector3 mousePos2D = Input.mousePosition;
         mousePos2D.z = -Camera.main.transform.position.z;
@@ -79,14 +89,53 @@ public class Slingshot : MonoBehaviour
         Vector3 projPos = launchPos + mouseDelta;
         projectile.transform.position = projPos;
 
+        DrawRubberOnProjectile();
+
         if (Input.GetMouseButtonUp(0))
         {
             aimingMod = false;
             projectileRB.isKinematic = false;
             projectileRB.velocity = -mouseDelta * velocityMult;
 
+            ProjectileLine.S.poi = null;
+
             FollowCam.POI = projectile;
+
+            MissionDemolition.ShotFired();
             projectile = null;
         }
+    }
+
+    private void DrawRubber()
+    {
+        line.positionCount = 2;
+        line.SetPosition(0, leftArmEnd.position);
+        line.SetPosition(1, rightArmEnd.position);
+
+        line.enabled = true;
+    }
+
+    private void DrawRubberOnProjectile()
+    {
+        float distanceX = projectile.transform.position.x - leftArmEnd.position.x;
+
+        SphereCollider projectileSC = projectile.GetComponent<SphereCollider>();
+        Vector3 linePosition = projectile.transform.position;
+        if (distanceX > 0)
+        {
+            linePosition.x += projectileSC.radius;
+        }
+        else
+        {
+            linePosition.x -= projectileSC.radius;
+        }
+
+        line.positionCount = 4;
+        line.SetPosition(0, leftArmEnd.position);
+        line.SetPosition(1, new Vector3(linePosition.x, linePosition.y, rightArmEnd.position.z));
+        line.SetPosition(2, new Vector3(linePosition.x, linePosition.y, leftArmEnd.position.z));
+        line.SetPosition(3, rightArmEnd.position);
+
+        line.enabled = true;
     }
 }
